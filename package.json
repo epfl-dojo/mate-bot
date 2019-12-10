@@ -1,0 +1,22 @@
+{
+  "name": "botmate",
+  "version": "0.0.1",
+  "description": "A telegram mate-bot",
+  "main": "index.js",
+  "dependencies": {
+    "telebot": "^1.2.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "epfl",
+    "mate",
+    "telebot",
+    "telegram",
+    "bot"
+  ],
+  "author": "IDEV-FSD",
+  "license": "MIT"
+}
