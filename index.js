@@ -3,8 +3,19 @@ const Secrets = require('./secrets.json');
 const bot = new TeleBot(Secrets.BOT_TOKEN);
 const fs = require('fs')
 const usersDataFile = './users_data.json'
-var users = "";
-DoFileExists()
+var users = {};
+if (!doesFileExists(usersDataFile)){
+  console.log("File doesn't exist!")
+  fs.appendFileSync('users_data.json', '{}', 'utf8');
+}
+users = fs.readFileSync(usersDataFile, 'utf8')
+
+bot.on('text', (msg) => {
+  msg.reply.text(msg.text)
+  createChatList(msg)
+  createUserList(msg)
+})
+
 var commands = {
                   'list': [
                     {
@@ -18,25 +29,23 @@ var commands = {
                   ]
                 }
 
+// /start command
 bot.on([`/${commands.list[0].name}`], (msg) => {
   msg.reply.text("Hello! I am Club Mate Bot, I'm here to help you manage your mate consumption. Please type '/help' to begin!")
-  CreateChatList(msg)
-  CreateUserList(msg)
 });
 
+// /help command
 bot.on([`/${commands.list[1].name}`], (msg) => {
   helpmsg = ''
-
   for (var i = 0;i < commands.list.length;i++) {
     helpmsg += `${commands.list[i].name} : ${commands.list[i].desc} \n`
   }
-
   msg.reply.text(helpmsg)
 });
 
 bot.start();
 
-function CreateUserList(msg){
+function createUserList(msg){
   console.log(users);
   if(!users[msg.chat.id][msg.from.id]) {
     users[msg.chat.id][msg.from.id] = {
@@ -53,7 +62,7 @@ function CreateUserList(msg){
     }
   }
 
-async function CreateChatList(msg){
+async function createChatList(msg){
     if (!users[msg.chat.id]) {
       users = {
         [msg.chat.id]: {
@@ -68,18 +77,14 @@ async function CreateChatList(msg){
   console.log(users)
 }
 
-function DoFileExists(usersDataFile){
+function doesFileExists(filePath){
   try {
-    if (fs.existsSync('users_data.json')) {
-      console.log("File exists!")
+    if (fs.existsSync(filePath)) {
+      return true
     } else {
-      fs.appendFileSync('users_data.json', '{}', 'utf8');
+      return false
     }
-    users = fs.readFileSync(usersDataFile, 'utf8')
   } catch(err) {
-
+    console.error(err)
   }
-}
-function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
 }
