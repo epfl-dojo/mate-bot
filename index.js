@@ -4,11 +4,9 @@ const bot = new TeleBot(Secrets.BOT_TOKEN)
 const dh = require('./dataHandle')
 
 var users = dh.initializeUsers()
-
 bot.on('text', (msg) => {
-  msg.reply.text(msg.text)
-  dh.createChatList(msg, users)
-  dh.createUserList(msg, users)
+  users = dh.createChatList(msg, users)
+  users = dh.createUserList(msg, users)
 })
 
 var commands = {
@@ -37,5 +35,10 @@ bot.on([`/${commands.list[1].name}`], (msg) => {
   }
   msg.reply.text(helpmsg)
 });
+
+// bot.on(/^\/send(.+)$/, (msg, props) => {
+//   const value = props.match[1].trim()
+//   console.log(value)
+// })
 
 bot.start()
