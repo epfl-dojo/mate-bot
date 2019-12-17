@@ -1,12 +1,16 @@
 const TeleBot = require('telebot')
 const Secrets = require('./secrets.json')
+const fs = require('fs')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const dh = require('./dataHandle')
 
 var users = dh.initializeUsers()
+var prices = dh.initializePrices()
+
 bot.on('text', async (msg) => {
   users = await dh.createChatList(msg, users)
   users = await dh.createUserList(msg, users)
+  prices = await dh.createPricesList(msg, prices)
 })
 
 var commands = {
@@ -18,6 +22,10 @@ var commands = {
                     {
                       'name': "help",
                       'desc': 'Shows a list of available commands'
+                    },
+                    {
+                      'name': "setprice",
+                      'desc': 'Sets the price of a box or a bottle of mate'
                     }
                   ]
                 }
@@ -34,6 +42,44 @@ bot.on([`/${commands.list[1].name}`], (msg) => {
     helpmsg += `${commands.list[i].name} : ${commands.list[i].desc} \n`
   }
   msg.reply.text(helpmsg)
+});
+
+// /setprice command
+bot.on([`/${commands.list[2].name}`], (msg) => {
+  var args = msg.text.split(" ")
+
+  if (args[1] && args[2]) {
+    if (isNaN(args[2])) {
+      msg.reply.text("You must type a number!")
+    } else {
+      switch (args[1]) {
+        case "box":
+            prices[msg.chat.id].box = parseInt(args[2])
+
+            fs.writeFile('./prices_data.json', JSON.stringify(prices, null, 2), 'utf8', function (err) {
+              if (err) {
+                return console.log(err)
+              }
+            })
+
+            msg.reply.text(`The price of a box of mate is now ${prices[msg.chat.id].box} .-`)
+          break;
+        case "bottle":
+            prices[msg.chat.id].bottle = parseInt(args[2])
+
+            fs.writeFile('./prices_data.json', JSON.stringify(prices, null, 2), 'utf8', function (err) {
+              if (err) {
+                return console.log(err)
+              }
+            })
+
+            msg.reply.text(`The price of a bottle of mate is now ${prices[msg.chat.id].bottle} .-`)
+          break;
+        default:
+          msg.reply.text(`${args[1]} is invalid!`)
+      }
+    }
+  }
 });
 
 // bot.on(/^\/send(.+)$/, (msg, props) => {
