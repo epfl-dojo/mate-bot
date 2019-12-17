@@ -4,9 +4,9 @@ const bot = new TeleBot(Secrets.BOT_TOKEN)
 const dh = require('./dataHandle')
 
 var users = dh.initializeUsers()
-bot.on('text', (msg) => {
-  users = dh.createChatList(msg, users)
-  users = dh.createUserList(msg, users)
+bot.on('text', async (msg) => {
+  users = await dh.createChatList(msg, users)
+  users = await dh.createUserList(msg, users)
 })
 
 var commands = {
