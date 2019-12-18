@@ -25,7 +25,7 @@ bot.on([`/${commands.list[1].name}`], (msg) => {
   helpmsg = ''
 
   for (var i = 0;i < commands.list.length;i++) {
-    helpmsg += `${commands.list[i].name} : ${commands.list[i].desc} \n`
+    helpmsg += `/${commands.list[i].name} : ${commands.list[i].desc} \n`
   }
 
   msg.reply.text(helpmsg)
