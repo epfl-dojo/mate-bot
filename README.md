@@ -4,13 +4,11 @@
 
 # Setup
 
-1. Communicate with [@BotFather](https://t.me/BotFather) to create a bot
-and get the token.
+1. Communicate with [@BotFather](https://t.me/BotFather) to create a bot and get the token.
 1. Rename `secrets.sample.json` to `secrets.json`.
-1. Replace the `BOT_TOKEN` key in the `secrets.json` file with the
-   bot token.
-1. Use `npm i` to create node module file.
-1. Lancer le script `node index.js`.
+1. Replace the `BOT_TOKEN` key in the `secrets.json` file with the bot token.
+1. Run `npm i` to install the node dependencies.
+1. Run script with `node index.js`.
 
 # Commands
 
