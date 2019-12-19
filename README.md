@@ -1,7 +1,14 @@
 # Mate Bot
 
-[Telegram](https://t.me) bot to manage the consumption of
-[Club Mate](https://fr.wikipedia.org/wiki/Club-Mate) between different people.
+[Telegram](https://t.me) bot to manage the consumption of [Club Mate](https://fr.wikipedia.org/wiki/Club-Mate) between different people.
+
+# Setup
+
+1. Communicate with [@BotFather](https://t.me/BotFather) to create a bot and get the token.
+1. Rename `secrets.sample.json` to `secrets.json`.
+1. Replace the `BOT_TOKEN` key in the `secrets.json` file with the bot token.
+1. Run `npm i` to install the node dependencies.
+1. Run script with `node index.js`.
 
 # Commands
 
