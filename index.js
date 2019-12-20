@@ -32,7 +32,7 @@ var commands = {
     },
     {
       'name': "buybox",
-      'desc': 'The user buys a bot of club mate.'
+      'desc': 'The user buys a box of club mate.'
     }
   ]
 }
