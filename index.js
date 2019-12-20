@@ -16,15 +16,15 @@ bot.on('text', async (msg) => {
 var commands = {
   'list': [{
       'name': "start",
-      'desc': 'Welcome command'
+      'desc': 'Welcome command.'
     },
     {
       'name': "help",
-      'desc': 'Shows a list of available commands'
+      'desc': 'Shows a list of available commands.'
     },
     {
       'name': "setprice",
-      'desc': 'Sets the price of a box or a bottle of mate'
+      'desc': 'Sets the price of a box or a bottle of mate.'
     },
     {
       'name': "drink",
@@ -32,7 +32,7 @@ var commands = {
     },
     {
       'name': "buybox",
-      'desc': 'The user drinks a club-mate.'
+      'desc': 'The user buys a bot of club mate.'
     }
   ]
 }
