@@ -14,21 +14,24 @@ bot.on('text', async (msg) => {
 })
 
 var commands = {
-                  'list': [
-                    {
-                      'name': "start",
-                      'desc': 'Welcome command'
-                    },
-                    {
-                      'name': "help",
-                      'desc': 'Shows a list of available commands'
-                    },
-                    {
-                      'name': "setprice",
-                      'desc': 'Sets the price of a box or a bottle of mate'
-                    }
-                  ]
-                }
+  'list': [{
+      'name': "start",
+      'desc': 'Welcome command'
+    },
+    {
+      'name': "help",
+      'desc': 'Shows a list of available commands'
+    },
+    {
+      'name': "setprice",
+      'desc': 'Sets the price of a box or a bottle of mate'
+    },
+    {
+      'name': "drink",
+      'desc': 'The user drinks a club-mate.'
+    }
+  ]
+}
 
 // /start command
 bot.on([`/${commands.list[0].name}`], (msg) => {
@@ -80,6 +83,18 @@ bot.on([`/${commands.list[2].name}`], (msg) => {
       }
     }
   }
+});
+
+// /drink command
+bot.on([`/${commands.list[3].name}`], (msg) => {
+  msg.reply.text("Cheers " + users[msg.chat.id][msg.from.id].username + "!!")
+  console.log(users[msg.chat.id][msg.from.id].wallet);
+  users[msg.chat.id][msg.from.id].wallet += 2
+  fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+    if (err) {
+      return console.log(err)
+    }
+  })
 });
 
 // bot.on(/^\/send(.+)$/, (msg, props) => {
