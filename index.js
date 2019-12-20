@@ -29,6 +29,10 @@ var commands = {
     {
       'name': "drink",
       'desc': 'The user drinks a club-mate.'
+    },
+    {
+      'name': "buybox",
+      'desc': 'The user drinks a club-mate.'
     }
   ]
 }
@@ -95,6 +99,17 @@ bot.on([`/${commands.list[3].name}`], (msg) => {
       return console.log(err)
     }
   })
+});
+
+// /buybox command
+bot.on([`/${commands.list[4].name}`], (msg) => {
+  users[msg.chat.id][msg.from.id].wallet -= parseInt(prices[msg.chat.id].box)
+  fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+    if (err) {
+      return console.log(err)
+    }
+  })
+  msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate ! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} in your wallet!`)
 });
 
 // bot.on(/^\/send(.+)$/, (msg, props) => {
