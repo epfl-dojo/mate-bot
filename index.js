@@ -158,8 +158,6 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
   }
 })
 
-//
-
 // /charge
 bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)')], (msg, props) => {
   if (props.match[2]) {
@@ -204,4 +202,10 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
     }
   }
 })
+
+// /dump command
+bot.on('/dump', async (msg) => {
+  return bot.sendDocument(msg.from.id, 'users_data.json')
+})
+
 bot.start()
