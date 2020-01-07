@@ -1,8 +1,10 @@
 const TeleBot = require('telebot')
 const Secrets = require('./secrets.json')
 const fs = require('fs')
+const ascii = require('ascii-table')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const dh = require('./dataHandle')
+const table = new ascii().setHeading("Users", "Wallets");
 
 var users = dh.initializeUsers()
 var prices = dh.initializePrices()
@@ -128,9 +130,9 @@ bot.on(`/${commands.list[4].name}`, (msg) => {
 bot.on(`/${commands.list[5].name}`, (msg) => {
   let tmpMsg = ""
   Object.values(users[msg.chat.id]).forEach(element =>
-    tmpMsg += `@${element.username} → ${element.wallet}.-\n`
-  )
-  msg.reply.text(tmpMsg)
+    table.addRow(`@${element.username}`, `${element.wallet}`)
+)
+  bot.sendMessage(msg.chat.id, '```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
 })
 
 // /send command
