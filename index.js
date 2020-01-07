@@ -37,26 +37,30 @@ var commands = {
 		{
 			'name': "balance",
 			'desc': 'Shows the status of everyone\'s wallet.'
+		},
+		{
+			'name': "send",
+			'desc': 'Send money to another person!'
 		}
 	]
 }
 
 // /start command
-bot.on([`/${commands.list[0].name}`], (msg) => {
+bot.on(`/${commands.list[0].name}`, (msg) => {
   msg.reply.text("Hello! I am Club Mate Bot, I'm here to help you manage your mate consumption. Please type '/help' to begin!")
-});
+})
 
 // /help command
-bot.on([`/${commands.list[1].name}`], (msg) => {
+bot.on(`/${commands.list[1].name}`, (msg) => {
   helpmsg = ''
   for (var i = 0;i < commands.list.length;i++) {
     helpmsg += `/${commands.list[i].name} : ${commands.list[i].desc} \n`
   }
   msg.reply.text(helpmsg)
-});
+})
 
 // /setprice command
-bot.on([`/${commands.list[2].name}`], (msg) => {
+bot.on(`/${commands.list[2].name}`, (msg) => {
   var args = msg.text.split(" ")
 
   if (args[1] && args[2]) {
@@ -91,10 +95,10 @@ bot.on([`/${commands.list[2].name}`], (msg) => {
       }
     }
   }
-});
+})
 
 // /drink command
-bot.on([`/${commands.list[3].name}`], (msg) => {
+bot.on(`/${commands.list[3].name}`, (msg) => {
   msg.reply.text("Cheers " + users[msg.chat.id][msg.from.id].username + "!!")
   console.log(users[msg.chat.id][msg.from.id].wallet);
   users[msg.chat.id][msg.from.id].wallet += 2
@@ -103,31 +107,58 @@ bot.on([`/${commands.list[3].name}`], (msg) => {
       return console.log(err)
     }
   })
-});
+})
 
 // /buybox command
-bot.on([`/${commands.list[4].name}`], (msg) => {
-	users[msg.chat.id][msg.from.id].wallet -= parseInt(prices[msg.chat.id].box)
-	fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
-		if (err) {
-			return console.log(err)
-		}
-	})
-	msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate ! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} in your wallet!`)
-});
+bot.on(`/${commands.list[4].name}`, (msg) => {
+  users[msg.chat.id][msg.from.id].wallet -= parseInt(prices[msg.chat.id].box)
+  fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+    if (err) {
+      return console.log(err)
+    }
+  })
+  msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate ! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} in your wallet!`)
+})
 
 // /balance command
-bot.on([`/${commands.list[5].name}`], (msg) => {
+bot.on(`/${commands.list[5].name}`, (msg) => {
   let tmpMsg = ""
-	Object.values(users[msg.chat.id]).forEach(element =>
-    tmpMsg += `${element.username} → ${element.wallet}.-\n`
-	)
+  Object.values(users[msg.chat.id]).forEach(element =>
+    tmpMsg += `@${element.username} → ${element.wallet}.-\n`
+  )
   msg.reply.text(tmpMsg)
-});
+})
 
-// bot.on(/^\/send(.+)$/, (msg, props) => {
-//   const value = props.match[1].trim()
-//   console.log(value)
-// })
+// /send command
+bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props) => {
+  let user = props.match[1].trim().substring(1)
+  let amount = props.match[2].trim()
+  let userid = dh.findUserIdByUsername(users[msg.chat.id], user)
+
+  console.log(user, amount)
+
+  if (amount > 0) {
+    try {
+      users[msg.chat.id][userid].wallet += parseInt(amount)
+      users[msg.chat.id][msg.from.id].wallet -= parseInt(amount)
+
+      fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+        if (err) {
+          return console.log(err)
+        }
+      })
+      msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} gave ${amount} CHF to @${users[msg.chat.id][userid].username}`)
+    } catch (err) {
+      msg.reply.text(`${user} is not a user in your group/chat!`)
+    }
+  } else {
+    msg.reply.text(`${amount} is an insufficient/invalid amount`)
+  }
+
+
+
+})
+
+
 
 bot.start()
