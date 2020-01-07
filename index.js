@@ -149,16 +149,11 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
       })
       msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} gave ${amount} CHF to @${users[msg.chat.id][userid].username}`)
     } catch (err) {
-      msg.reply.text(`${user} is not a user in your group/chat!`)
+      msg.reply.text(`@${user} is not a user in your group/chat!`)
     }
   } else {
     msg.reply.text(`${amount} is an insufficient/invalid amount`)
   }
-
-
-
 })
-
-
 
 bot.start()
