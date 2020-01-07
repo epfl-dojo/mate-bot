@@ -156,6 +156,7 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
   }
 })
 
+// /dump command
 bot.on('/dump', async (msg) => {
   return bot.sendDocument(msg.from.id, 'users_data.json')
 })
