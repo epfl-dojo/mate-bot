@@ -41,6 +41,10 @@ var commands = {
 		{
 			'name': "send",
 			'desc': 'Send money to another person!'
+		},
+		{
+			'name': "charge",
+			'desc': 'Charge amount on someone'
 		}
 	]
 }
@@ -135,8 +139,6 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
   let amount = props.match[2].trim()
   let userid = dh.findUserIdByUsername(users[msg.chat.id], user)
 
-  console.log(user, amount)
-
   if (amount > 0) {
     try {
       users[msg.chat.id][userid].wallet += parseInt(amount)
@@ -156,4 +158,50 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
   }
 })
 
+//
+
+// /charge
+bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)')], (msg, props) => {
+  if (props.match[2]) {
+    let user = props.match[1].trim().substring(1)
+    let amount = props.match[2].trim()
+    let userid = dh.findUserIdByUsername(users[msg.chat.id], user)
+
+    if (amount != 0) {
+      try {
+        users[msg.chat.id][userid].wallet += parseInt(amount)
+        fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+          if (err) {
+            return console.log(err)
+          }
+        })
+        let walletOperationMesage = ''
+        if (amount > 0) {
+          walletOperationMesage = `@${users[msg.chat.id][msg.from.id].username} has deposited ${amount} CHF into @${users[msg.chat.id][userid].username}'s wallet`
+        } else {
+          walletOperationMesage = `@${users[msg.chat.id][msg.from.id].username} has withdrawn ${amount.substring(1)} CHF from @${users[msg.chat.id][userid].username}'s wallet`
+        }
+        walletOperationMesage += `\nYou can use /balance to see the wallets status`
+        msg.reply.text(walletOperationMesage)
+      } catch (err) {
+        msg.reply.text(`@${user} is not a user in your group/chat!`)
+      }
+    } else {
+      msg.reply.text(`${amount} is an invalid amount`)
+    }
+  } else {
+    let amount = props.match[1].trim()
+    if (amount != 0) {
+        users[msg.chat.id][msg.from.id].wallet += parseInt(amount)
+        fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
+          if (err) {
+            return console.log(err)
+          }
+        })
+        msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} charged himself ${amount} CHF`)
+    } else {
+      msg.reply.text(`${amount} is an invalid amount`)
+    }
+  }
+})
 bot.start()
