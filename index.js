@@ -5,7 +5,6 @@ const ascii = require('ascii-table')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const utils = require('./utils')
 const table = new ascii().setHeading("Users", "Wallets");
-
 var users = utils.initializeUsers()
 var prices = utils.initializePrices()
 
@@ -115,10 +114,13 @@ bot.on(`/${commands.list[4].name}`, (msg) => {
 // /balance command
 bot.on(`/${commands.list[5].name}`, (msg) => {
   let tmpMsg = ""
+  let table = new ascii().setHeading("Users", "Wallets")
+
   Object.values(users[msg.chat.id]).forEach(element =>
     table.addRow(`@${element.username}`, `${element.wallet}`)
 )
   bot.sendMessage(msg.chat.id, '```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
+  table = ""
 })
 
 // /send command
@@ -140,8 +142,6 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
     msg.reply.text(`${amount} is an insufficient/invalid amount`)
   }
 })
-
-//
 
 // /charge
 bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)')], (msg, props) => {
@@ -179,4 +179,10 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
     }
   }
 })
+
+// /dump command
+bot.on('/dump', async (msg) => {
+  return bot.sendDocument(msg.from.id, 'users_data.json')
+})
+
 bot.start()
