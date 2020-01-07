@@ -3,3 +3,4 @@ node_modules
 commands.txt
 users_data_old.json
 users_data.json
+prices_data.json
