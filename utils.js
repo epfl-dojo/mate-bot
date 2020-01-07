@@ -1,12 +1,11 @@
 const fs = require('fs')
 const usersDataFile = './users_data.json'
-const usersPricesFile = './prices_data.json'
+const pricesDataFile = './prices_data.json'
 module.exports = {
   createUserList: async function (msg, usersObj) {
     if(!usersObj[msg.chat.id][msg.from.id]) {
       usersObj[msg.chat.id][msg.from.id] = {
         'wallet' : 0,
-        'id' : msg.from.id,
         'username' : msg.from.username,
         'firstname' : msg.from.first_name
       }
@@ -35,13 +34,26 @@ module.exports = {
         'box' : 40,
         'bottle' : 2
       }
-      fs.writeFileSync(usersPricesFile, JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
+      fs.writeFileSync(pricesDataFile, JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
         if (err) {
           return console.log(err)
         }
       })
     }
     return usersObj
+  },
+  writeUsersDataToFile: function (items) {
+    module.exports.writeFile(usersDataFile, items)
+  },
+  writePricesDataToFile: function (items) {
+    module.exports.writeFile(pricesDataFile, items)
+  },
+  writeFile: function (filepath, item) {
+    fs.writeFile(filepath, JSON.stringify(item, null, 2), 'utf8', function (err) {
+      if (err) {
+        return console.log(err)
+      }
+    })
   },
   doesFileExists: function (filePath){
     try {
@@ -60,7 +72,7 @@ module.exports = {
     return JSON.parse(tmp)
   },
   readPricesData: function () {
-    let tmp = fs.readFileSync(usersPricesFile, 'utf8')
+    let tmp = fs.readFileSync(pricesDataFile, 'utf8')
     // Let transform the string to an object, see https://stackoverflow.com/questions/45015/safely-turning-a-json-string-into-an-object
     return JSON.parse(tmp)
   },
@@ -69,8 +81,8 @@ module.exports = {
     console.log(usersDataFile, 'should exist now...')
   },
   createPricesDataFile: function () {
-    fs.appendFileSync(usersPricesFile, '{}', 'utf8')
-    console.log(usersPricesFile, 'should exist now...')
+    fs.appendFileSync(pricesDataFile, '{}', 'utf8')
+    console.log(pricesDataFile, 'should exist now...')
   },
   initializeUsers: function () {
     if (!module.exports.doesFileExists(usersDataFile)) {
@@ -80,7 +92,7 @@ module.exports = {
     return module.exports.readUsersData()
   },
   initializePrices: function () {
-    if (!module.exports.doesFileExists(usersPricesFile)) {
+    if (!module.exports.doesFileExists(pricesDataFile)) {
       console.log("File doesn't exist!")
       module.exports.createPricesDataFile()
     }
