@@ -1,7 +1,34 @@
 const fs = require('fs')
 const usersDataFile = './users_data.json'
 const usersPricesFile = './prices_data.json'
+
 module.exports = {
+  checkUsername: async function (msg, usersObj) {
+    if(msg.from.username === usersObj[msg.chat.id][msg.from.id].username){
+      //Username has not changed
+    }
+    else {
+      //Username has changed
+      usersObj[msg.chat.id][msg.from.id].username = msg.from.username
+      fs.writeFile('./users_data.json', JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
+        if (err) {
+          return console.log(err)
+        }
+      })
+    }
+    if(msg.from.first_name === usersObj[msg.chat.id][msg.from.id].firstname){
+      //Firstname has not changed
+    }
+    else {
+      //Firstname has changed
+      usersObj[msg.chat.id][msg.from.id].firstname = msg.from.first_name
+      fs.writeFile('./users_data.json', JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
+        if (err) {
+          return console.log(err)
+        }
+      })
+    }
+  },
   createUserList: async function (msg, usersObj) {
     if(!usersObj[msg.chat.id][msg.from.id]) {
       usersObj[msg.chat.id][msg.from.id] = {

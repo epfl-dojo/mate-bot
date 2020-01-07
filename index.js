@@ -3,7 +3,6 @@ const Secrets = require('./secrets.json')
 const fs = require('fs')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const dh = require('./dataHandle')
-
 var users = dh.initializeUsers()
 var prices = dh.initializePrices()
 
@@ -11,6 +10,7 @@ bot.on('text', async (msg) => {
   users = await dh.createChatList(msg, users)
   users = await dh.createUserList(msg, users)
   prices = await dh.createPricesList(msg, prices)
+  await dh.checkUsername(msg, users)
 })
 
 var commands = {
