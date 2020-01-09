@@ -46,6 +46,10 @@ var commands = {
 		{
 			'name': "charge",
 			'desc': 'Charge amount on someone'
+		},
+		{
+			'name': "price",
+			'desc': 'Show current group\'s item prices'
 		}
 	]
 }
@@ -113,7 +117,6 @@ bot.on(`/${commands.list[4].name}`, (msg) => {
 
 // /balance command
 bot.on(`/${commands.list[5].name}`, (msg) => {
-  let tmpMsg = ""
   let table = new ascii().setHeading("Users", "Wallets")
 
   Object.values(users[msg.chat.id]).forEach(element =>
@@ -178,6 +181,18 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
       msg.reply.text(`${amount} is an invalid amount`)
     }
   }
+})
+
+// /price command
+bot.on(`/${commands.list[8].name}`, (msg) => {
+  let table = new ascii().setHeading("Item", "Current price")
+
+    table.addRow(`Box`, `${prices[msg.chat.id].box} CHF`)
+    table.addRow(`Bottle`, `${prices[msg.chat.id].bottle} CHF`)
+
+  msg.reply.text(`Here are the current prices in your group for your items :`)
+  bot.sendMessage(msg.chat.id, '```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
+  table = ""
 })
 
 // /dump command
