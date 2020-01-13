@@ -4,36 +4,32 @@ const pricesDataFile = './prices_data.json'
 module.exports = {
   checkUsername: async function (msg, usersObj) {
     if (msg.from.username !== usersObj[msg.chat.id][msg.from.id].username ||
-        msg.from.first_name !== usersObj[msg.chat.id][msg.from.id].firstname) {
+        msg.from.first_name !== usersObj[msg.chat.id][msg.from.id].firstname ||
+        msg.from.last_name !== usersObj[msg.chat.id][msg.from.id].lastname) {
       // Username or first name has changed
       usersObj[msg.chat.id][msg.from.id].username = msg.from.username
       usersObj[msg.chat.id][msg.from.id].firstname = msg.from.first_name
+      usersObj[msg.chat.id][msg.from.id].lastname = msg.from.last_name
       module.exports.writeUsersDataToFile(usersObj)
     }
+    return usersObj
   },
   createUserList: async function (msg, usersObj) {
     if(!usersObj[msg.chat.id][msg.from.id]) {
       usersObj[msg.chat.id][msg.from.id] = {
         'wallet' : 0,
         'username' : msg.from.username,
-        'firstname' : msg.from.first_name
+        'firstname' : msg.from.first_name,
+        'lastname' : msg.from.last_name
       }
-      fs.writeFile(usersDataFile, JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
-        if (err) {
-          return console.log(err)
-        }
-      })
+      module.exports.writeUsersDataToFile(usersObj)
     }
     return usersObj
   },
   createChatList: function (msg, usersObj) {
     if (!usersObj[msg.chat.id]) {
       usersObj[msg.chat.id] = {}
-      fs.writeFileSync(usersDataFile, JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
-        if (err) {
-          return console.log(err)
-        }
-      })
+      module.exports.writeUsersDataToFile(usersObj)
     }
     return usersObj
   },
@@ -43,11 +39,7 @@ module.exports = {
         'box' : 40,
         'bottle' : 2
       }
-      fs.writeFileSync(pricesDataFile, JSON.stringify(usersObj, null, 2), 'utf8', function (err) {
-        if (err) {
-          return console.log(err)
-        }
-      })
+      module.exports.writePricesDataToFile(usersObj)
     }
     return usersObj
   },
