@@ -1,5 +1,4 @@
 secrets.json
 node_modules
 commands.txt
-users_data.json
-prices_data.json
+*_data.json
