@@ -2,6 +2,15 @@ const fs = require('fs')
 const usersDataFile = './users_data.json'
 const pricesDataFile = './prices_data.json'
 module.exports = {
+  checkUsername: async function (msg, usersObj) {
+    if (msg.from.username !== usersObj[msg.chat.id][msg.from.id].username ||
+        msg.from.first_name !== usersObj[msg.chat.id][msg.from.id].firstname) {
+      // Username or first name has changed
+      usersObj[msg.chat.id][msg.from.id].username = msg.from.username
+      usersObj[msg.chat.id][msg.from.id].firstname = msg.from.first_name
+      module.exports.writeUsersDataToFile(usersObj)
+    }
+  },
   createUserList: async function (msg, usersObj) {
     if(!usersObj[msg.chat.id][msg.from.id]) {
       usersObj[msg.chat.id][msg.from.id] = {
