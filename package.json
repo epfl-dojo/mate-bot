@@ -1,9 +1,10 @@
 {
   "name": "botmate",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A telegram mate-bot",
   "main": "index.js",
   "dependencies": {
+    "ascii-table": "0.0.9",
     "telebot": "^1.2.6"
   },
   "devDependencies": {},

@@ -1,16 +1,18 @@
 const TeleBot = require('telebot')
 const Secrets = require('./secrets.json')
 const fs = require('fs')
+const ascii = require('ascii-table')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
-const dh = require('./dataHandle')
-var users = dh.initializeUsers()
-var prices = dh.initializePrices()
+const utils = require('./utils')
+const table = new ascii().setHeading("Users", "Wallets")
+var users = utils.initializeUsers()
+var prices = utils.initializePrices()
 
 bot.on('text', async (msg) => {
-  users = await dh.createChatList(msg, users)
-  users = await dh.createUserList(msg, users)
-  prices = await dh.createPricesList(msg, prices)
-  await dh.checkUsername(msg, users)
+  users = await utils.createChatList(msg, users)
+  users = await utils.createUserList(msg, users)
+  prices = await utils.createPricesList(msg, prices)
+  await utils.checkUsername(msg, users)
 })
 
 var commands = {
@@ -41,6 +43,14 @@ var commands = {
 		{
 			'name': "send",
 			'desc': 'Send money to another person!'
+		},
+		{
+			'name': "charge",
+			'desc': 'Charge amount on someone'
+		},
+		{
+			'name': "price",
+			'desc': 'Show current group\'s item prices'
 		}
 	]
 }
@@ -70,13 +80,7 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
       switch (args[1]) {
         case "box":
             prices[msg.chat.id].box = parseInt(args[2])
-
-            fs.writeFile('./prices_data.json', JSON.stringify(prices, null, 2), 'utf8', function (err) {
-              if (err) {
-                return console.log(err)
-              }
-            })
-
+            utils.writePricesDataToFile(prices)
             msg.reply.text(`The price of a box of mate is now ${prices[msg.chat.id].box} .-`)
           break;
         case "bottle":
@@ -102,51 +106,38 @@ bot.on(`/${commands.list[3].name}`, (msg) => {
   msg.reply.text("Cheers " + users[msg.chat.id][msg.from.id].username + "!!")
   console.log(users[msg.chat.id][msg.from.id].wallet);
   users[msg.chat.id][msg.from.id].wallet += 2
-  fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
-    if (err) {
-      return console.log(err)
-    }
-  })
+  utils.writeUsersDataToFile(users)
 })
 
 // /buybox command
 bot.on(`/${commands.list[4].name}`, (msg) => {
   users[msg.chat.id][msg.from.id].wallet -= parseInt(prices[msg.chat.id].box)
-  fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
-    if (err) {
-      return console.log(err)
-    }
-  })
+  utils.writeUsersDataToFile(users)
   msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate ! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} in your wallet!`)
 })
 
 // /balance command
 bot.on(`/${commands.list[5].name}`, (msg) => {
-  let tmpMsg = ""
+  let table = new ascii().setHeading("Users", "Wallets")
+
   Object.values(users[msg.chat.id]).forEach(element =>
-    tmpMsg += `@${element.username} → ${element.wallet}.-\n`
+    table.addRow(`@${element.username}`, `${element.wallet}`)
   )
-  msg.reply.text(tmpMsg)
+  bot.sendMessage(msg.chat.id, '```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
+  table = ""
 })
 
 // /send command
 bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props) => {
   let user = props.match[1].trim().substring(1)
   let amount = props.match[2].trim()
-  let userid = dh.findUserIdByUsername(users[msg.chat.id], user)
-
-  console.log(user, amount)
+  let userid = utils.findUserIdByUsername(users[msg.chat.id], user)
 
   if (amount > 0) {
     try {
       users[msg.chat.id][userid].wallet += parseInt(amount)
       users[msg.chat.id][msg.from.id].wallet -= parseInt(amount)
-
-      fs.writeFile('./users_data.json', JSON.stringify(users, null, 2), 'utf8', function(err) {
-        if (err) {
-          return console.log(err)
-        }
-      })
+      utils.writeUsersDataToFile(users)
       msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} gave ${amount} CHF to @${users[msg.chat.id][userid].username}`)
     } catch (err) {
       msg.reply.text(`@${user} is not a user in your group/chat!`)
@@ -156,6 +147,56 @@ bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props
   }
 })
 
+// /charge
+bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)')], (msg, props) => {
+  if (props.match[2]) {
+    let user = props.match[1].trim().substring(1)
+    let amount = props.match[2].trim()
+    let userid = utils.findUserIdByUsername(users[msg.chat.id], user)
+
+    if (amount != 0) {
+      try {
+        users[msg.chat.id][userid].wallet += parseInt(amount)
+        utils.writeUsersDataToFile(users)
+        let walletOperationMesage = ''
+        if (amount > 0) {
+          walletOperationMesage = `@${users[msg.chat.id][msg.from.id].username} has deposited ${amount} CHF into @${users[msg.chat.id][userid].username}'s wallet`
+        } else {
+          walletOperationMesage = `@${users[msg.chat.id][msg.from.id].username} has withdrawn ${amount.substring(1)} CHF from @${users[msg.chat.id][userid].username}'s wallet`
+        }
+        walletOperationMesage += `\nYou can use /balance to see wallets statuses`
+        msg.reply.text(walletOperationMesage)
+      } catch (err) {
+        msg.reply.text(`@${user} is not a user in your group/chat!`)
+      }
+    } else {
+      msg.reply.text(`${amount} is an invalid amount`)
+    }
+  } else {
+    let amount = props.match[1].trim()
+    if (amount != 0) {
+        users[msg.chat.id][msg.from.id].wallet += parseInt(amount)
+        utils.writeUsersDataToFile(users)
+        msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} charged himself ${amount} CHF`)
+    } else {
+      msg.reply.text(`${amount} is an invalid amount`)
+    }
+  }
+})
+
+// /price command
+bot.on(`/${commands.list[8].name}`, (msg) => {
+  let table = new ascii().setHeading("Item", "Current price")
+
+    table.addRow(`Box`, `${prices[msg.chat.id].box} CHF`)
+    table.addRow(`Bottle`, `${prices[msg.chat.id].bottle} CHF`)
+
+  msg.reply.text(`Here are the current prices in your group for your items :`)
+  bot.sendMessage(msg.chat.id, '```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
+  table = ""
+})
+
+// /dump command
 bot.on('/dump', async (msg) => {
   return bot.sendDocument(msg.from.id, 'users_data.json')
 })
