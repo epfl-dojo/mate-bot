@@ -12,7 +12,7 @@ bot.on('text', async (msg) => {
   users = await utils.createChatList(msg, users)
   users = await utils.createUserList(msg, users)
   prices = await utils.createPricesList(msg, prices)
-  await utils.checkUsername(msg, users)
+  users = await utils.checkUsername(msg, users)
 })
 
 var commands = {
