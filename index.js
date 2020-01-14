@@ -115,7 +115,7 @@ bot.on(`/${commands.list[3].name}`, (msg) => {
 bot.on(`/${commands.list[4].name}`, (msg) => {
   users[msg.chat.id][msg.from.id].wallet -= parseInt(options[msg.chat.id].box)
   utils.writeUsersDataToFile(users)
-  msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} in your wallet!`)
+  msg.reply.text(`Thanks ${users[msg.chat.id][msg.from.id].username} just bought a box of club-mate! :)\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} ${options[msg.chat.id].currency} in your wallet!`)
 })
 
 // /balance command
