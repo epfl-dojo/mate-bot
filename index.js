@@ -57,14 +57,14 @@ var commands = {
 
 // /start command
 bot.on(`/${commands.list[0].name}`, (msg) => {
-  msg.reply.text("Hello! I am Club Mate Bot, I'm here to help you manage your mate consumption. Please type '/help' to begin!")
+  msg.reply.text(`Hello! I am Club Mate Bot, I\'m here to help you manage your mate consumption. Please type '/help' to begin!`)
 })
 
 // /help command
 bot.on(`/${commands.list[1].name}`, (msg) => {
   helpmsg = ''
   for (var i = 0;i < commands.list.length;i++) {
-    helpmsg += `/${commands.list[i].name} : ${commands.list[i].desc} \n`
+    helpmsg += `/${commands.list[i].name}: ${commands.list[i].desc} \n`
   }
   msg.reply.text(helpmsg)
 })
@@ -80,7 +80,7 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
         } else {
           options[msg.chat.id].box = parseInt(args[2])
           utils.writeOptionsDataToFile(options)
-          msg.reply.text(`The price of a box of mate is now ${options[msg.chat.id].box} ${options[msg.chat.id].currency}`)
+          msg.reply.text(`The price of a box of mate is now ${options[msg.chat.id].box} ${options[msg.chat.id].currency}.\nYou can use /option to list current options.`)
         }
       break
       case 'bottle':
@@ -95,7 +95,7 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
       case 'currency':
         options[msg.chat.id].currency = args[2]
         utils.writeOptionsDataToFile(options)
-        msg.reply.text(`The currency is now ${options[msg.chat.id].currency}`)
+        msg.reply.text(`The currency is now "${options[msg.chat.id].currency}".\nYou can use /option to list current options.`)
       break
       default:
         msg.reply.text(`${args[1]} is invalid!`)
