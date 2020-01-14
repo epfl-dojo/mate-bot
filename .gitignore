@@ -1,4 +1,5 @@
 secrets.json
 node_modules
 commands.txt
-*_data.json
+data/*
+!data/.gitkeep

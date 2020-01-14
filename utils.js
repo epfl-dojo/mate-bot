@@ -1,6 +1,6 @@
 const fs = require('fs')
-const usersDataFile = './users_data.json'
-const optionsDataFile = './options_data.json'
+const usersDataFile = './data/data_users.json'
+const optionsDataFile = './data/data_options.json'
 module.exports = {
   checkUsername: async function (msg, usersObj) {
     if (msg.from.username !== usersObj[msg.chat.id][msg.from.id].username ||
