@@ -14,9 +14,10 @@
 
   * `/start` → Welcome :)
   * `/help` → Shows a list of all available commands with their description.
-  * `/send [amount]` → Send a specific amount of money to another person.
+  * `/send <@username> <amount>` → Send a specific amount of money to another person.
   * `/balance` → Shows the status of everyone's wallet.
-  * `/setprice [item] [amount]` → Change the price of an item (price of box or bottle...).
-  * `/price` → List of current prices.
+  * `/setoption <item> <value>` → Change the value of an item (price of box, bottle, currency...).
+  * `/option` → List current options's values.
   * `/buybox` → The user buys a case of club-mate.
   * `/drink` → The user drinks a club-mate.
+  * `/charge [@username] <value>`

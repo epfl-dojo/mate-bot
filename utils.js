@@ -1,6 +1,6 @@
 const fs = require('fs')
 const usersDataFile = './users_data.json'
-const pricesDataFile = './prices_data.json'
+const optionsDataFile = './options_data.json'
 module.exports = {
   checkUsername: async function (msg, usersObj) {
     if (msg.from.username !== usersObj[msg.chat.id][msg.from.id].username ||
@@ -33,21 +33,22 @@ module.exports = {
     }
     return usersObj
   },
-  createPricesList: function (msg, usersObj) {
+  createOptionsList: function (msg, usersObj) {
     if (!usersObj[msg.chat.id]) {
       usersObj[msg.chat.id] = {
         'box' : 40,
-        'bottle' : 2
+        'bottle' : 2,
+        'currency' : '$'
       }
-      module.exports.writePricesDataToFile(usersObj)
+      module.exports.writeOptionsDataToFile(usersObj)
     }
     return usersObj
   },
   writeUsersDataToFile: function (items) {
     module.exports.writeFile(usersDataFile, items)
   },
-  writePricesDataToFile: function (items) {
-    module.exports.writeFile(pricesDataFile, items)
+  writeOptionsDataToFile: function (items) {
+    module.exports.writeFile(optionsDataFile, items)
   },
   writeFile: function (filepath, item) {
     fs.writeFile(filepath, JSON.stringify(item, null, 2), 'utf8', function (err) {
@@ -72,8 +73,8 @@ module.exports = {
     // Let transform the string to an object, see https://stackoverflow.com/questions/45015/safely-turning-a-json-string-into-an-object
     return JSON.parse(tmp)
   },
-  readPricesData: function () {
-    let tmp = fs.readFileSync(pricesDataFile, 'utf8')
+  readOptionsData: function () {
+    let tmp = fs.readFileSync(optionsDataFile, 'utf8')
     // Let transform the string to an object, see https://stackoverflow.com/questions/45015/safely-turning-a-json-string-into-an-object
     return JSON.parse(tmp)
   },
@@ -81,9 +82,9 @@ module.exports = {
     fs.appendFileSync(usersDataFile, '{}', 'utf8')
     console.log(usersDataFile, 'should exist now...')
   },
-  createPricesDataFile: function () {
-    fs.appendFileSync(pricesDataFile, '{}', 'utf8')
-    console.log(pricesDataFile, 'should exist now...')
+  createOptionsDataFile: function () {
+    fs.appendFileSync(optionsDataFile, '{}', 'utf8')
+    console.log(optionsDataFile, 'should exist now...')
   },
   initializeUsers: function () {
     if (!module.exports.doesFileExists(usersDataFile)) {
@@ -92,12 +93,12 @@ module.exports = {
     }
     return module.exports.readUsersData()
   },
-  initializePrices: function () {
-    if (!module.exports.doesFileExists(pricesDataFile)) {
+  initializeOptions: function () {
+    if (!module.exports.doesFileExists(optionsDataFile)) {
       console.log("File doesn't exist!")
-      module.exports.createPricesDataFile()
+      module.exports.createOptionsDataFile()
     }
-    return module.exports.readPricesData()
+    return module.exports.readOptionsData()
   },
   findUserIdByUsername: function (data, username) {
     return Object.keys(data).find( k => data[k]['username'] === username )
