@@ -82,7 +82,7 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
           utils.writeOptionsDataToFile(options)
           msg.reply.text(`The price of a box of mate is now ${options[msg.chat.id].box} ${options[msg.chat.id].currency}`)
         }
-      break;
+      break
       case 'bottle':
         if (isNaN(args[2])) {
           msg.reply.text('You must type a number!')
@@ -91,12 +91,12 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
           utils.writeOptionsDataToFile(options)
           msg.reply.text(`The price of a bottle of mate is now ${options[msg.chat.id].bottle} ${options[msg.chat.id].currency}.\nYou can use /option to list current options.`)
         }
-      break;
+      break
       case 'currency':
         options[msg.chat.id].currency = args[2]
         utils.writeOptionsDataToFile(options)
         msg.reply.text(`The currency is now ${options[msg.chat.id].currency}`)
-      break;
+      break
       default:
         msg.reply.text(`${args[1]} is invalid!`)
     }
