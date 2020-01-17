@@ -100,6 +100,9 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
       default:
         msg.reply.text(`${args[1]} is invalid!`)
     }
+  } else {
+    let message = 'Incorrect syntax, please type /' + commands.list[2].name + ' `<item>` `<value>`. Possible items are `box`, `bottle` or `currency`.'
+    bot.sendMessage(msg.chat.id, message, {parseMode: 'Markdown'})
   }
 })
 
@@ -128,26 +131,35 @@ bot.on(`/${commands.list[5].name}`, (msg) => {
 })
 
 // /send command
-bot.on(new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), (msg, props) => {
-  let user = props.match[1].trim().substring(1)
-  let amount = props.match[2].trim()
-  let userid = utils.findUserIdByUsername(users[msg.chat.id], user)
-  if (amount > 0) {
-    try {
-      users[msg.chat.id][userid].wallet -= parseInt(amount)
-      users[msg.chat.id][msg.from.id].wallet += parseInt(amount)
-      utils.writeUsersDataToFile(users)
-      msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} gave ${amount} ${options[msg.chat.id].currency} to @${users[msg.chat.id][userid].username}.`)
-    } catch (err) {
-      msg.reply.text(`@${user} is not a user in your group/chat!`)
+bot.on([new RegExp('^\/'+`${commands.list[6].name}`+' (@.+) (\\d+)'), new RegExp('^\/'+`${commands.list[6].name}$`)], (msg, props) => {
+  if(props.match[2]){
+    let user = props.match[1].trim().substring(1)
+    let amount = props.match[2].trim()
+    let userid = utils.findUserIdByUsername(users[msg.chat.id], user)
+    if (amount > 0) {
+      try {
+        users[msg.chat.id][userid].wallet -= parseInt(amount)
+        users[msg.chat.id][msg.from.id].wallet += parseInt(amount)
+        utils.writeUsersDataToFile(users)
+        if(user === users[msg.chat.id][msg.from.id].username){
+          msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} tried to find a glitch in the matrix!`)
+        } else {
+          msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} gave ${amount} ${options[msg.chat.id].currency} to @${users[msg.chat.id][userid].username}.`)
+        }
+      } catch (err) {
+        msg.reply.text(`@${user} is not a user in your group/chat!`)
+      }
+    } else {
+      msg.reply.text(`${amount} is an insufficient/invalid amount!`)
     }
   } else {
-    msg.reply.text(`${amount} is an insufficient/invalid amount!`)
+    let message = 'Incorrect syntax, please type /' + commands.list[6].name + ' `<@username>` `<amount>`.'
+    bot.sendMessage(msg.chat.id, message, {parseMode: 'Markdown'})
   }
 })
 
 // /charge
-bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)')], (msg, props) => {
+bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}`+' (-?\\d+)'), new RegExp('^\/'+`${commands.list[7].name}$`)], (msg, props) => {
   if (props.match[2]) {
     let user = props.match[1].trim().substring(1)
     let amount = props.match[2].trim()
@@ -162,7 +174,7 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
         } else {
           walletOperationMesage = `@${users[msg.chat.id][msg.from.id].username} has withdrawn ${amount.substring(1)} ${options[msg.chat.id].currency} from @${users[msg.chat.id][userid].username}'s wallet.`
         }
-        walletOperationMesage += `\nYou can use /balance to see wallets statuses.`
+        walletOperationMesage += `\n@${users[msg.chat.id][userid].username} currently has ${users[msg.chat.id][userid].wallet} ${options[msg.chat.id].currency} in his wallet!`
         msg.reply.text(walletOperationMesage)
       } catch (err) {
         msg.reply.text(`@${user} is not a user in your group/chat!`)
@@ -170,17 +182,23 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
     } else {
       msg.reply.text(`${amount} is an invalid amount!`)
     }
-  } else {
+  } else if (props.match[1]) {
     let amount = props.match[1].trim()
     if (amount != 0) {
         users[msg.chat.id][msg.from.id].wallet += parseInt(amount)
         utils.writeUsersDataToFile(users)
-        msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} charged himself ${amount} ${options[msg.chat.id].currency}.\nYou can use /balance to see wallets statuses.`)
+        msg.reply.text(`@${users[msg.chat.id][msg.from.id].username} charged himself ${amount} ${options[msg.chat.id].currency}.\n@${users[msg.chat.id][msg.from.id].username} currently has ${users[msg.chat.id][msg.from.id].wallet} ${options[msg.chat.id].currency} in his wallet!`)
     } else {
       msg.reply.text(`${amount} is an invalid amount!`)
     }
+  } else {
+    let message = 'Incorrect syntax, please type /' + commands.list[7].name + ' `<@username>` `<amount>`.'
+    bot.sendMessage(msg.chat.id, message, {parseMode: 'Markdown'})
   }
 })
+
+// let message = 'Incorrect syntax, please type /' + commands.list[2].name + ' `<item>` `<value>`. Possible items are `box`, `bottle` or `currency`.'
+// bot.sendMessage(msg.chat.id, message, {parseMode: 'Markdown'})
 
 // /option command
 bot.on(`/${commands.list[8].name}`, (msg) => {
