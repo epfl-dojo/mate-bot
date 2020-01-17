@@ -197,9 +197,6 @@ bot.on([new RegExp('^\/'+`${commands.list[7].name}`+' (@.+) (-?\\d+)'), new RegE
   }
 })
 
-// let message = 'Incorrect syntax, please type /' + commands.list[2].name + ' `<item>` `<value>`. Possible items are `box`, `bottle` or `currency`.'
-// bot.sendMessage(msg.chat.id, message, {parseMode: 'Markdown'})
-
 // /option command
 bot.on(`/${commands.list[8].name}`, (msg) => {
   let table = new ascii().setHeading('Option', 'Value')
