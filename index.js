@@ -1,6 +1,7 @@
 const TeleBot = require('telebot')
 const Secrets = require('./secrets.json')
 const ascii = require('ascii-table')
+const fetch = require('node-fetch')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const utils = require('./utils')
 const table = new ascii().setHeading('Users', 'Wallets')
@@ -108,9 +109,19 @@ bot.on(`/${commands.list[2].name}`, (msg) => {
 
 // /drink command
 bot.on(`/${commands.list[3].name}`, (msg) => {
+  let gifWords = ['bottle', 'alcohol', 'cheers', 'drink', 'party']
+  let pickedWord = gifWords[Math.floor(Math.random() * gifWords.length)]
+  console.log(pickedWord)
+  fetch(`https://api.giphy.com/v1/gifs/random?api_key=${Secrets.API_KEY}&tag=${pickedWord}&limit=1&offset=0&rating=G&lang=en`)
+    .then(res => res.json())
+    .then(json => {
+      json
+
+      msg.reply.video(`${json.data.images.original.url}`, {caption: `Cheers @${users[msg.chat.id][msg.from.id].username}!\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} ${options[msg.chat.id].currency} in your wallet!`})
+    })
+    .catch(err => console.error(err))
   users[msg.chat.id][msg.from.id].wallet -= 2
   utils.writeUsersDataToFile(users)
-  msg.reply.text(`Cheers @${users[msg.chat.id][msg.from.id].username}!\nYou currently have ${users[msg.chat.id][msg.from.id].wallet} ${options[msg.chat.id].currency} in your wallet!`)
 })
 
 // /buybox command
