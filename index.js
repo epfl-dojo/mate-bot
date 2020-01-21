@@ -1,6 +1,9 @@
 const TeleBot = require('telebot')
 const Secrets = require('./secrets.json')
+const Infos = require('./package.json')
 const ascii = require('ascii-table')
+const fetch = require('node-fetch')
+const os = require('os')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const utils = require('./utils')
 const table = new ascii().setHeading('Users', 'Wallets')
@@ -51,6 +54,10 @@ var commands = {
     {
       'name': 'option',
       'desc': 'Show current group\'s item options'
+    },
+    {
+      'name': 'about',
+      'desc': 'Shows bot\'s informations'
     }
   ]
 }
@@ -204,6 +211,27 @@ bot.on(`/${commands.list[8].name}`, (msg) => {
   table.addRow(`Bottle`, `${options[msg.chat.id].bottle} ${options[msg.chat.id].currency}`)
   table.addRow(`Currency`, `${options[msg.chat.id].currency}`)
   bot.sendMessage(msg.chat.id, 'Here are the current options in your group for your items:\n```\n' + table.toString() + '\n```', {parseMode: 'Markdown'})
+  table = ''
+})
+
+// /about command
+bot.on(`/${commands.list[9].name}`, (msg) => {
+  let table = new ascii().setHeading('Item', 'Info')
+  table.addRow(`Name`, `${Infos.name}`)
+  table.addRow(`Version`, `${Infos.version}`)
+  table.addRow(`Description`, `${Infos.description}`)
+  table.addRow(`Host Server`, `${os.hostname}`)
+  table.addRow(`Report Bug`, `https://github.com/epfl-dojo/mate-bot/issues`)
+  table.addRow(`Contribute`, `${os.hostname}`)
+  bot.sendMessage(msg.chat.id, '**BOT INFO**\n' +
+   '*Bot Name*: ' + `${Infos.name}\n` +
+   '*Version*: ' + `${Infos.version}\n` +
+   '*Author*: ' + `${Infos.author}\n` +
+   '*Description*: ' + `${Infos.description}\n` +
+   '*License*: ' + `[${Infos.license} ⬈](https://opensource.com/licenses/${Infos.license})\n` +
+   '*Host Server*: ' + `${os.hostname}\n` +
+   '*Report Bug*: ' + `[link ⬈](${Infos.bugs.url})\n` +
+   '*Readme*: ' + `[link ⬈](${Infos.homepage})\n`, {parseMode: 'Markdown'})
   table = ''
 })
 
