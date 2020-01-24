@@ -1,12 +1,12 @@
 {
   "name": "botmate",
-  "version": "0.0.6",
+  "version": "0.8.0",
   "description": "A telegram mate-bot",
   "main": "index.js",
   "dependencies": {
     "ascii-table": "^0.0.9",
     "node-fetch": "^2.6.0",
-    "superagent": "^5.2.1",
+    "os": "^0.1.1",
     "telebot": "^1.2.6"
   },
   "devDependencies": {},
@@ -21,5 +21,13 @@
     "bot"
   ],
   "author": "IDEV-FSD",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epfl-dojo/mate-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/epfl-dojo/mate-bot/issues"
+  },
+  "homepage": "https://github.com/epfl-dojo/mate-bot#readme"
 }
