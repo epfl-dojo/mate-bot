@@ -1,7 +1,38 @@
 const fs = require('fs')
+const TeleBot = require('telebot')
 const usersDataFile = './data/data_users.json'
 const optionsDataFile = './data/data_options.json'
+const secretsFile = './secrets.json'
 module.exports = {
+  setBotToken: function () {
+    var botToken = ''
+    if (module.exports.doesFileExists(secretsFile)) {
+      try {
+        const Secrets = require(secretsFile)
+          console.log(`Secret file successfully found, trying to use [${secretsFile}] bot token`)
+          botToken = Secrets.BOT_TOKEN
+          if (!botToken) {
+            console.error(`Error: BOT_TOKEN empty, please check [${secretsFile}] file`)
+            process.exit()
+          }
+      } catch (e) {
+        console.error(`Error: BOT_TOKEN not found, please check [${secretsFile}] file`)
+        process.exit()
+      }
+    } else {
+      console.log('No secret file found, trying to use process.env.BOT_TOKEN')
+      if (process.env.BOT_TOKEN) {
+        botToken = process.env.BOT_TOKEN
+      } else {
+        console.error('Error: [process.env.BOT_TOKEN] doesn\'t exists')
+        process.exit()
+      }
+    }
+    if(!botToken.includes(':')){
+      botToken += ':'
+    }
+    return botToken
+  },
   checkUsername: async function (msg, usersObj) {
     if (msg.from.username !== usersObj[msg.chat.id][msg.from.id].username ||
         msg.from.first_name !== usersObj[msg.chat.id][msg.from.id].firstname ||
