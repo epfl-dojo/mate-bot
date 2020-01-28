@@ -1,4 +1,7 @@
 const TeleBot = require('telebot')
+<<<<<<< HEAD
+const ascii = require('ascii-table')
+=======
 const Secrets = require('./secrets.json')
 const Infos = require('./package.json')
 const ascii = require('ascii-table')
@@ -6,9 +9,9 @@ const fetch = require('node-fetch')
 const os = require('os')
 const bot = new TeleBot(Secrets.BOT_TOKEN)
 const utils = require('./utils')
+>>>>>>> master
 const table = new ascii().setHeading('Users', 'Wallets')
-var users = utils.initializeUsers()
-var options = utils.initializeOptions()
+const utils = require('./utils')
 
 var botToken = utils.setBotToken()
 const bot = new TeleBot(botToken)
@@ -18,6 +21,9 @@ bot.on('error', (e) => {
     process.exit()
   }
 })
+
+var users = utils.initializeUsers()
+var options = utils.initializeOptions()
 
 bot.on('text', async (msg) => {
   users = await utils.createChatList(msg, users)
