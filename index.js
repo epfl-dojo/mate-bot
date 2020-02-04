@@ -4,11 +4,19 @@ const Infos = require('./package.json')
 const ascii = require('ascii-table')
 const fetch = require('node-fetch')
 const os = require('os')
-const bot = new TeleBot(Secrets.BOT_TOKEN)
 const utils = require('./utils')
 const table = new ascii().setHeading('Users', 'Wallets')
 var users = utils.initializeUsers()
 var options = utils.initializeOptions()
+
+var botToken = utils.setBotToken()
+const bot = new TeleBot(botToken)
+bot.on('error', (e) => {
+  if (e.error.description) {
+    console.log('Error: bot returned an error (' + e.error.description + '), please check the BOT_TOKEN')
+    process.exit()
+  }
+})
 
 bot.on('text', async (msg) => {
   users = await utils.createChatList(msg, users)

@@ -1,6 +1,6 @@
 {
   "name": "botmate",
-  "version": "0.8.0",
+  "version": "0.1.1",
   "description": "A telegram mate-bot",
   "main": "index.js",
   "dependencies": {
